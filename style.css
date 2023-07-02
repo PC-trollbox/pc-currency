@@ -1,0 +1,42 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #181a1b;
+    color: white;
+}
+
+a {
+    color: deepskyblue;
+}
+
+.object {
+    background: #131516;
+    padding: 8px;
+    border-radius: 8px;
+    margin: 8px;
+    overflow-wrap: break-word;
+}
+
+.object > h2 {
+    margin: 0;
+}
+
+input {
+    background: #2b2a33;
+    color: white;
+}
+
+.divatleft {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: fit-content;
+    height: fit-content;
+}
+
+.divatright {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: fit-content;
+    height: fit-content;
+}

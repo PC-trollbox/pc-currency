@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PCCurrency - Manage account (reauth)</title>
+        <link rel="stylesheet" href="style.css"></link>
+    </head>
+    <body>
+        <a href="/home">Return</a>
+        <h1>PCCurrency</h1>
+        <hr>
+        <h2>Managing account settings</h2>
+        <h3>Authentication Required</h3>
+        Please wait...
+
+        <script src="/imagination/Imagination.js"></script>
+        <script src="/imagination/gui.js"></script>
+        <script>
+            (async function() {
+                let pubkey_data = localStorage.getItem("pubk");
+                let privkey_data = localStorage.getItem("privk");
+                if (!privkey_data || !pubkey_data) return location.href = "/home";
+                if (privkey_data.startsWith("encrypted:")) {
+                    let password = await prompt("Enter your passphrase, then press Enter:");
+                    try {
+                        privkey_data = await imagination.encryption.decryptAES(JSON.parse(privkey_data.replace("encrypted:", "")), password);
+                    } catch {}
+                }
+                let imports;
+                try {
+                    imports = await imagination.encryption.importKeyPair(pubkey_data, privkey_data);
+                } catch { return location.href = "/home"; }
+                let rec_tok = await fetch("/manageAccountSecurityToken");
+                rec_tok = await rec_tok.text();
+                try {
+                    rec_tok = await imagination.encryption.decryptRSA(rec_tok, imports.privateKey);
+                } catch { return location.href = "/home"; }
+                location.href = "/manageAccount?security_token=" + encodeURIComponent(rec_tok);
+            })();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PCCurrency</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <a href="/">Return to PCCurrency</a>
+        <h1>Mining difficulty</h1>
+        PCCurrency is not a cryptocurrency, but it has "mining" feature that lets you push on your computer to earn PCCurrency.
+        <br>
+        The target hash must start with some amount of zeros. This is the difficulty.
+        <br>
+        The difficulty can't be less than 1 and more than 32.
+        <br>
+        <form action="/difficulty">
+            Target hash must start with <input name="difficulty" type="number" value="<nodejs-embed>currentDifficulty</nodejs-embed>"></input> zeros. <br>
+            <button>Apply and return to PCCurrency</button>
+        </form>
+    </body>
+</html>

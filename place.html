@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>PCCurrency Place</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <img src="/place.png" class="divatleft" id="placePng"></img>
+        <canvas width="2048" height="2048" id="canvas" class="divatleft"></canvas>
+        <div class="divatright">
+            Specify color: <input id="color" type="color" value="#000000">
+            <br>
+            Position in canvas: <label id="pos">0x0</label>
+        </div>
+        <script>
+            alert("Press ESC to quit.");
+
+            let canvas = document.getElementById("canvas");
+            let color = document.getElementById("color");
+            let placePng = document.getElementById("placePng");
+            let ctx = canvas.getContext("2d");
+            let lastPlacePic = new Image();
+            let pos = document.getElementById("pos");
+            let shutAbility = 0;
+            ctx.fillStyle = "#000000";
+            canvas.style.width = Math.min(innerWidth, innerHeight) + "px";
+            canvas.style.height = Math.min(innerWidth, innerHeight) + "px";
+            placePng.style.width = canvas.style.width;
+            placePng.style.height = canvas.style.height;
+
+            onresize = function() {
+                canvas.style.width = Math.min(innerWidth, innerHeight) + "px";
+                canvas.style.height = Math.min(innerWidth, innerHeight) + "px";
+                placePng.style.width = canvas.style.width;
+                placePng.style.height = canvas.style.height;
+            }
+
+            onkeyup = (e) => (e.keyCode == 27) ? (location.href = "/") : true
+            
+            color.onchange = () => {
+                ctx.fillStyle = color.value;
+            }
+
+            canvas.onmousemove = function(e) {
+                let x = e.offsetX * (2048 / Math.min(innerWidth, innerHeight));
+                let y = e.offsetY * (2048 / Math.min(innerWidth, innerHeight));
+                pos.innerText = Math.floor(x / 16) + "x" + Math.floor(y / 16);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillRect(Math.floor(x / 16) * 16, Math.floor(y / 16) * 16, 16, 16);
+            };
+
+            function shutAbilityZero() {
+                return new Promise(function(resolve) {
+                    let id = setInterval(function() {
+                        if (shutAbility == 0) {
+                            clearInterval(id);
+                            resolve();
+                        }
+                    });
+                });
+            }
+
+            canvas.onclick = async function(e) {
+                let x = e.offsetX * (2048 / Math.min(innerWidth, innerHeight));
+                let y = e.offsetY * (2048 / Math.min(innerWidth, innerHeight));
+                pos.innerText = Math.floor(x / 16) + "x" + Math.floor(y / 16);
+                await shutAbilityZero();
+                shutAbility++;
+                let a = await fetch("/place", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        x: x,
+                        y: y,
+                        color: ctx.fillStyle
+                    })
+                });
+                if (!a.ok) alert("Could not place: " + a.status + " " + a.statusText + "\n" + (await a.text()));
+                shutAbility--;
+                await shutAbilityZero();
+                shutAbility++;
+                placePng.src = "/place.png?v=" + Date.now();
+                shutAbility--;
+            };
+            setInterval(async function() {
+                await shutAbilityZero();
+                shutAbility++;
+                placePng.src = "/place.png?v=" + Date.now();
+                shutAbility--;
+            }, 1500);
+        </script>
+    </body>
+</html>

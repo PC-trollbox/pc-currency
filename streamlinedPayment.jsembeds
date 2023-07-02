@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PCCurrency</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <a href="/">Return to PCCurrency</a>
+        <h1>Payment</h1>
+        <hr>
+        You're about to pay for services provided on <nodejs-embed>referrer</nodejs-embed>, which are provided by <nodejs-embed>vendor</nodejs-embed>.
+        <br>
+        Service: <nodejs-embed>service</nodejs-embed>
+        <br>
+        Money to pay up: <nodejs-embed>money</nodejs-embed> PC
+        <br>
+        Money you have: <nodejs-embed>currencyAmount</nodejs-embed> PC
+        <br>
+        Vendor's username: <nodejs-embed>vendrUsername</nodejs-embed>
+        <br>
+        <button onclick="transaction();" <nodejs-embed>hasEnoughBalance</nodejs-embed>>Perform transaction</button>
+        <script src="/imagination/Imagination.js"></script>
+        <script>
+            function encryptionErrorHandler(e) {
+                console.error(e);
+                if (confirm("Something went wrong. Provide nerd info?")) alert(e);
+            }
+            async function transaction() {
+                let recipient = <nodejs-embed>vendrUsernmeJS</nodejs-embed>;
+                let amount = <nodejs-embed>monyJS</nodejs-embed>;
+                let description = <nodejs-embed>servceJS</nodejs-embed>;
+                let pubkey_data = localStorage.getItem("pubk");
+                let privkey_data = localStorage.getItem("privk");
+                if (!privkey_data || !pubkey_data) return alert("One or all of the keys are not located in the storage.");
+                if (privkey_data.startsWith("encrypted:")) {
+                    let password = await prompt("Enter your passphrase, then press Enter:");
+                    try {
+                        privkey_data = await imagination.encryption.decryptAES(JSON.parse(privkey_data.replace("encrypted:", "")), password);
+                    } catch {}
+                }
+                let imports;
+                try {
+                    imports = await imagination.encryption.importKeyPair(pubkey_data, privkey_data);
+                } catch (e) {
+                    return encryptionErrorHandler(e);
+                }
+                let transactionData = {
+                    recipient: recipient,
+                    money: amount,
+                    description: description
+                };
+                let randomAuthenticationToken = await fetch("/transactionAuth");
+                randomAuthenticationToken = await randomAuthenticationToken.text();
+                try {
+                    randomAuthenticationToken = await imagination.encryption.decryptRSA(randomAuthenticationToken, imports.privateKey);
+                } catch (e) {
+                    return encryptionErrorHandler(e);
+                }
+                transactionData.token = randomAuthenticationToken;
+                let result = await fetch("/inNetworkTransaction", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(transactionData)
+                });
+                if (result.ok) location.href = "/hallOfTransactions";
+                else alert("Failed to perform transaction: " + result.status + " " + result.statusText + "\n" + await result.text());
+            }
+        </script>
+    </body>
+</html>

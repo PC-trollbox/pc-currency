@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PCCurrency</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <a href="/">Return</a>
+        <h1>Create Transaction</h1>
+        <a href="/give">[send inside of PCCurrency?]</a>
+        <hr>
+        <b>Currency amount</b>: <input id="amount" type="number" min="0"></input> <select id="currency">
+            <option disabled>None is available</option>
+        </select> = <label id="equalsToPC">[unknown]</label> PC
+        <br>
+        <b>Sender</b> (local network): <em><nodejs-embed>username</nodejs-embed></em>
+        <br>
+        <b>Recipient</b> (remote network): <input id="username"></input>
+        <br>
+        <b>Sent at</b>: Now
+        <br>
+        <b>Token</b>: Not known yet. Calculated automatically.
+        <br>
+        <b>Description</b>: <textarea id="description" maxlength="512" placeholder="Description for this transaction" rows="3"></textarea>
+        <br>
+        <button onclick="transaction();">Perform transaction</button>
+        <script src="/imagination/Imagination.js"></script>
+        <script>
+            (async function() {
+                let currencies = await fetch("/api/availableCurrencies");
+                currencies = await currencies.json();
+                currency.children[0].remove();
+                for (let currency2 of currencies) {
+                    let option = document.createElement("option");
+                    option.value = currency2;
+                    option.text = currency2;
+                    currency.appendChild(option);
+                }
+            })();
+
+            amount.oninput = async function() {
+                let currencyEquivalent = await fetch("/api/currencyEquivalents?money=" + amount.value + "&currency=" + currency.value);
+                currencyEquivalent = await currencyEquivalent.json();
+                equalsToPC.innerText = currencyEquivalent.toFixed(2);
+            }
+
+            function encryptionErrorHandler(e) {
+                console.error(e);
+                if (confirm("Something went wrong. Provide nerd info?")) alert(e);
+            }
+            async function transaction() {
+                let recipient = document.getElementById("username").value;
+                let amount = document.getElementById("amount").value;
+                let description = document.getElementById("description").value;
+                let currency = document.getElementById("currency").value;
+                let pubkey_data = localStorage.getItem("pubk");
+                let privkey_data = localStorage.getItem("privk");
+                if (!privkey_data || !pubkey_data) return alert("One or all of the keys are not located in the storage.");
+                if (privkey_data.startsWith("encrypted:")) {
+                    let password = await prompt("Enter your passphrase, then press Enter:");
+                    try {
+                        privkey_data = await imagination.encryption.decryptAES(JSON.parse(privkey_data.replace("encrypted:", "")), password);
+                    } catch {}
+                }
+                let imports;
+                try {
+                    imports = await imagination.encryption.importKeyPair(pubkey_data, privkey_data);
+                } catch (e) {
+                    return encryptionErrorHandler(e);
+                }
+                let transactionData = {
+                    recipient: recipient,
+                    money: amount,
+                    description: description,
+                    currency: currency
+                };
+                let randomAuthenticationToken = await fetch("/transactionAuth");
+                randomAuthenticationToken = await randomAuthenticationToken.text();
+                try {
+                    randomAuthenticationToken = await imagination.encryption.decryptRSA(randomAuthenticationToken, imports.privateKey);
+                } catch (e) {
+                    return encryptionErrorHandler(e);
+                }
+                transactionData.token = randomAuthenticationToken;
+                let result = await fetch("/outNetworkTransaction", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(transactionData)
+                });
+                if (result.ok) location.href = "/hallOfTransactions";
+                else alert("Failed to perform transaction: " + result.status + " " + result.statusText + "\n" + await result.text());
+            }
+        </script>
+    </body>
+</html>

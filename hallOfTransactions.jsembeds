@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PCCurrency</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <a href="/">Return</a>
+        <h1>Hall of Transactions</h1>
+        <<nodejs-embed>reverseOrder ? "a" : "label"</nodejs-embed> href="/hallOfTransactions?chronological=1">Show from the first transaction made</<nodejs-embed>reverseOrder ? "a" : "label"</nodejs-embed>>
+         / <<nodejs-embed>reverseOrder ? "label" : "a"</nodejs-embed> href="/hallOfTransactions?chronological=0">Show from the last transaction made</<nodejs-embed>reverseOrder ? "label" : "a"</nodejs-embed>>
+        <hr>
+        <nodejs-embed>
+            let trans = transactions;
+            if (reverseOrder) trans = trans.reverse();
+            let html = "";
+            for (let tran in trans) {
+                let tranInfo = trans[tran];
+                let signs = {};
+                signs[-1] = "-";
+                signs[0] = "";
+                signs[1] = "+";
+                html = html + '<div class="transaction object">';
+                html = html + "<h2>" + "Transaction #" + (Number(tran) + 1) + "</h2>";
+                html = html + "<b>Currency amount</b>: " + signs[Math.sign(tranInfo.money)] + Math.abs(tranInfo.money).toFixed(2) + " PC<br>";
+                html = html + "<b>Sender</b>: " + require("he").encode(tranInfo.sender) + "<br>";
+                html = html + "<b>Recipient</b>: " + require("he").encode(tranInfo.recipient) + "<br>";
+                html = html + '<b>Sent at</b>: <label class="datify">' + new Date(tranInfo.timestamp).toISOString() + "</label><br>";
+                html = html + "<b>Token</b>: " + tranInfo.token + "<br>";
+                html = html + "<b>Description</b>: " + require("he").encode(tranInfo.description.slice(0, 512) + (tranInfo.length > 512 ? "..." : "")) + "<br>";
+                html = html + '</div>';
+            }
+            html
+        </nodejs-embed>
+        <script src="/datify.js"></script>
+    </body>
+</html>

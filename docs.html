@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>PCCurrency</title>
+		<link rel="stylesheet" href="/style.css">
+	</head>
+	<body>
+		<a href="/">Return</a>
+		<h1>Here's the basic API documentation</h1>
+		<b>Most operations require you to log in using the cookie token (put the cookie in the "Cookie" header!)</b>
+		<hr>
+		<code>POST /imagination/register</code> - Register a new account. <br>
+		Body data (application/json):
+		<pre>
+{
+	"username": "beepboop",
+	"pubkey": "4096 bits of the RSA-OAEP SHA-256 key, in PEM"
+}
+		</pre>
+		Example response:
+		<pre>OK</pre>
+		<hr>
+		<code>GET /imagination/getEncryptedSecret</code> - Get a cookie <code>token</code> to use for the account, in an encrypted form. <br>
+		Query parameters needed: <br>
+		<code>pubkey</code> - the public key of the account. <br>
+		Example response:
+		<pre>VGhlIHRva2VuIGlzIGFjdHVhbGx5IGVuY3J5cHRlZCwgbm90IGVuY29kZWQuIE9LPw==</pre>
+		<hr>
+		<code>GET /transactionAuth</code> - Get a token to authorize transactions, in an encrypted form. <br>
+		Example response:
+		<pre>VGhlIHRva2VuIGlzIHN0aWxsIGVuY3J5cHRlZC4=</pre>
+		<b>Note: the token is only available for 10 seconds and expires right after a transaction was completed.</b>
+		<hr>
+		<code>POST /inNetworkTransaction</code> - Perform an in-network transaction. <br>
+		Body data (application/json):
+		<pre>
+{
+	"recipient": "beepboop",
+	"money": 1,
+	"description": "Simple transaction of 1 PC to beepboop to support its development.",
+	"token": "0000000000000000000000000000000000000000000000000000000000000000"
+}
+		</pre>
+		Example response:
+		<pre>OK</pre>
+		<hr>
+		<code>POST /outNetworkTransaction</code> - Perform an out-network transaction. <br>
+		Body data (application/json):
+		<pre>
+{
+	"recipient": "beepboop",
+	"money": 1,
+	"description": "Simple transaction of 1 TST to beepboop to support its development.",
+	"token": "0000000000000000000000000000000000000000000000000000000000000000",
+	"currency": "TST"
+}
+		</pre>
+		Example response:
+		<pre>OK</pre>
+		<hr>
+		<code>GET /place.png</code> - The pixboard. <hr>
+		<code>POST /place</code> - Place on the pixboard. <b>Unlimited!</b> <br>
+		Body data (application/json):
+		<pre>
+{
+	"x": 0, // x % 16 should be 0
+	"y": 0, // y % 16 should be 0
+	"color": "#a700ff"
+}
+		</pre>
+		<hr>
+		<code>GET /manageAccountSecurityToken</code> - Get a token to use for account management which expires in about 15 minutes, in an encrypted form. <br>
+		Example response:
+		<pre>RGlkIHlvdSBleHBlY3QgbWUgdG8gbGVhayBzdWNoIGFuIGltcG9ydGFudCB0b2tlbj8=</pre>
+		<hr>
+		<code>GET /manageAccount/revokeToken</code> - Revoke a /manageAccountSecurityToken. <br>
+		Query parameters needed: <br>
+		<code>security_token</code> - the account management token to revoke. <br>
+		Example response: a redirect to <code>/</code>
+		<hr>
+		<code>GET /manageAccount/changeKeypair</code> - Change the public key of the account. <br>
+		Query parameters needed: <br>
+		<code>pubkey</code> - the new public key of the account. <br>
+		<code>security_token</code> - the account management token to use. <br>
+		Example response:
+		<pre>OK</pre>
+		<b>NOTE: expires your account management token!</b>
+		<hr>
+		<code>GET /manageAccount/changeSecret</code> - Changes the cookie of the account. <br>
+		Query parameters needed: <br>
+		<code>security_token</code> - the account management token to use. <br>
+		Example response: a redirect to <code>/manageAccount</code> <br>
+		<b>NOTE: expires your account management token!</b>
+		<hr>
+		<code>GET /manageAccount/removeAccount</code> - Removes the account. <b>Forever!</b><br>
+		Query parameters needed: <br>
+		<code>security_token</code> - the account management token to use. <br>
+		Example response: a redirect to <code>/</code> <br>
+		<b>NOTE: expires your account management token!</b>
+		<hr>
+		<code>GET /api/balance</code> - Get the balance of the account. <hr>
+		<code>GET /api/transactions</code> - Get all transactions of the account. The first transaction is the first done on this account. <hr>
+		<code>GET /api/transactions/[index]</code> - Get a transaction of the account by the index of it. The index starts at 0. <hr>
+		<code>GET /api/placeUsages</code> - Gets how many pixels the user has placed today. The counting continues even after 1024. <hr>
+		<code>GET /api/dailyReset</code> - Gets when the daily limits reset and the account gains access to a daily reward. <hr>
+		<code>GET /api/username</code> - Gets the username. <hr>
+		<code>GET /streamlinedPayment</code> - Not really an API, but lets you streamline the transaction process. <br>
+		Query parameters needed: <br>
+		<code>money</code> - the amount the user has to pay. <br>
+		<code>vendor</code> - whoever sells the <code>service</code> or manages the website (from the referer header) <br>
+		<code>vendorUsername</code> - the <code>vendor</code>'s, or the website manager's, username in PCCurrency. <br>
+		<code>service</code> - a good that the <code>vendor</code>, or manager of the website, sells.<hr>
+		<code>GET /api/availableCurrencies</code> - Outputs available currencies. <br>
+		Example response:
+		<pre>
+[
+	"TST"
+]
+		</pre>
+		<hr>
+		<code>GET /api/currencyEquivalents</code> - Outputs the rates. <br>
+		Optional query parameters: <br>
+		<code>money</code> - How much are you converting of <code>currency</code> <br>
+		<code>currency</code> - The currency of <code>money</code> <br>
+		4 possible OK outputs: <br>
+		No query parameters (example currencies, let's say "TST" and "PC"): <br>
+		<pre>[0.01, 1]</pre>
+		Only "money" (money=100): <br>
+		<pre>[1, 100]</pre>
+		Only "currency" (currency="TST"): <br>
+		<pre>0.01</pre>
+		Both (money=100, currency="TST"): <br>
+		<pre>1</pre>
+		<hr>
+		<code>POST /api/outNetworkTransactionSend</code> - Sends an outside-of-network transaction to PCCurrency. <br>
+		Body data (application/json):
+		<pre>
+{
+	"sender": "beepboop",
+	"recipient": "PC",
+	"money": 1,
+	"timestamp": 2147483647999,
+	"token": "0000000000000000000000000000000000000000000000000000000000000000",
+	"description": "Example outside-of-network transaction!",
+	"currencySecret": "This is test, change me. Should be secret (duh!)"
+}
+		</pre>
+		Example response:
+		<pre>OK</pre>
+		<hr>
+		<code>GET /api/task</code> - Mining API. <br>
+		Optional query parameters: <br>
+		<code>code</code> - The solution to the task. <br>
+		<code>thread</code> - In multi-threaded situations, what thread will do the task. <br>
+		Example responses:
+		<pre>
+{
+	"data": "VGhpcyBpcyBzb21lIGJhc2U2NCByYW5kb20gbnVtYmVy",
+	"difficulty": "0000"
+}
+		</pre>
+		<pre>OK</pre>
+		<hr>
+		<code>GET /difficulty</code> - Set a mining difficulty. <br>
+		Query parameters needed: <br>
+		<code>difficulty</code> - the difficulty to set, the amount of zeros. <br>
+		Example response: a redirect to <code>/</code>
+	</body>
+</html>

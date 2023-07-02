@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PCCurrency - Welcome!</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <h1>PCCurrency</h1>
+        <hr>
+        <b>You'll need to log in.</b> If you have no account, register <a href="/register">right here</a>. The login process is powered by Imagination Security.
+        <br>
+        <br>
+        <div hidden id="keyless_auth_container">
+            <button onclick="imaginationAuthWithoutKey()" id="keyless_auth">Log in</button>
+            <hr>
+            <button onclick="openKeyed()">Apply other keypair</button>
+        </div>
+        <div hidden id="keyed_auth_container">
+            Insert a file named SEND_TO_SERVER.key: <input type="file" id="pubkey"> <br>
+            Insert a file named KEEP_SECRET.key: <input type="file" id="privkey"> <br>
+            <button onclick="imaginationAuth()" id="keyed_auth">Log in</button>
+        </div>
+
+        <div id="logon_message" hidden>
+            <b>Hang on</b>, the logon is still processing. You'll be redirected to the home page automatically.
+        </div>
+
+        <script src="/imagination/Imagination.js"></script>
+        <script src="/imagination/gui.js"></script>
+        <script>
+            function openOverlay() {
+                pubkey.disabled = true;
+                privkey.disabled = true;
+                try { keyless_auth.disabled = true; } catch {}
+                keyed_auth.disabled = true;
+                logon_message.hidden = false;
+            }
+            function closeOverlayWithError(err) {
+                pubkey.disabled = false;
+                privkey.disabled = false;
+                try { keyless_auth.disabled = false; } catch {}
+                keyed_auth.disabled = false;
+                logon_message.hidden = true;
+                if (err) alert("Logon failed:\n" + err.toString());
+            }
+
+            function imaginationAuthWithoutKey() {
+                imagination.gui.imaginationAuthGUI([], openOverlay, prompt, closeOverlayWithError, localStorage);
+            }
+
+            function imaginationAuth() {
+                imagination.gui.imaginationAuthGUI([pubkey.files[0], privkey.files[0]], openOverlay, prompt, closeOverlayWithError, localStorage);
+            }
+
+            function openKeyed() {
+                keyless_auth_container.remove();
+                keyed_auth_container.hidden = false;
+            }
+
+            if (imagination.gui.isKeySaved()) keyless_auth_container.hidden = false;
+            else keyed_auth_container.hidden = false;
+        </script>
+    </body>
+</html>

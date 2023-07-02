@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PCCurrency</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <a href="/logout">Log out</a> <a href="/place">Place</a> <a href="/manageAccount">Manage</a> <a href="/api/">API</a>
+        <h1>Welcome, <nodejs-embed>username</nodejs-embed></h1>
+        <b>Your balance is</b>: <nodejs-embed>currencyAmount</nodejs-embed> PC <a href="/hallOfTransactions">[hall of transactions]</a> <a href="/give">[create a transaction]</a> <br>
+        <b>On Place</b>, you have put <nodejs-embed>dailyPixAmount</nodejs-embed> pixels out of 1024. If you place more than that, you can still place pixels, but you won't earn any money. This limit resets <label class="datify"><nodejs-embed>isologon</nodejs-embed></label>. <br>
+        <b><a href="/difficulty">Mining difficulty</a></b> [<a href="/mining">download miner</a>] is set to <nodejs-embed>currentDifficulty</nodejs-embed>.
+        <script src="/datify.js"></script>
+    </body>
+</html>

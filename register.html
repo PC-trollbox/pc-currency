@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PCCurrency - A newbie?</title>
+        <link rel="stylesheet" href="/style.css">
+    </head>
+    <body>
+        <h1>PCCurrency</h1>
+        <hr>
+        <b>You'll need to register.</b> If you already have an account, log in <a href="/">right here</a>. The registration process is powered by Imagination Security.
+        <br>
+        <br>
+        Username: <input id="userName" placeholder="Input your username..." required></input>
+        <br>
+        <button onclick="useImagination()" id="imaginationGenerator">Register with Imagination Security</button>
+
+        <div id="logon_message" hidden>
+            <b>Hang on</b>, the registration is still processing. You'll know when it's ready: it'll make you download 2 files called KEEP_SECRET.key and SEND_TO_SERVER.key. Make sure you keep them.
+        </div>
+
+        <script src="/imagination/Imagination.js"></script>
+        <script src="/imagination/gui.js"></script>
+        <script>
+            function openOverlay() {
+                userName.disabled = true;
+                logon_message.hidden = false;
+                onbeforeunload = () => false;
+            }
+            function closeOverlayWithError(err) {
+                userName.disabled = false;
+                logon_message.hidden = true;
+                onbeforeunload = null;
+                if (err) alert("Registration failed:\n" + err.toString());
+            }
+
+
+            async function useImagination() {
+                if (!userName.value) return alert("Please input an username!");
+                let newkeypair = await imagination.gui.imaginationPubkeyFrontend(openOverlay, closeOverlayWithError, localStorage);
+                let fet = await fetch("/imagination/register", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        pubkey: newkeypair.publicKeyPem,
+                        username: userName.value,
+                    }),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                });
+                openOverlay();
+                if (fet.ok) await imagination.gui.backupKeys([], prompt, false, localStorage);
+                closeOverlayWithError(fet.ok ? undefined : "Failed to register because: " + fet.status + " (" + fet.statusText + ")\n" + (await fet.text()));
+            }
+        </script>
+    </body>
+</html>
