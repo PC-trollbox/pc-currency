@@ -5,13 +5,19 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>PCCurrency</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/style.css">
     </head>
     <body>
         <a href="/">Return</a>
         <h1>Hall of Transactions</h1>
-        <<nodejs-embed>reverseOrder ? "a" : "label"</nodejs-embed> href="/hallOfTransactions?chronological=1">Show from the first transaction made</<nodejs-embed>reverseOrder ? "a" : "label"</nodejs-embed>>
-         / <<nodejs-embed>reverseOrder ? "label" : "a"</nodejs-embed> href="/hallOfTransactions?chronological=0">Show from the last transaction made</<nodejs-embed>reverseOrder ? "label" : "a"</nodejs-embed>>
+        <form action="/hallOfTransactions" class="linkbtn">
+            <input type="hidden" name="chronological" value="1"></input>
+            <button <nodejs-embed>reverseOrder ? "" : "disabled"</nodejs-embed>>Show from the first transaction made</button>
+        </form> / <form action="/hallOfTransactions" class="linkbtn">
+            <input type="hidden" name="chronological" value="0"></input>
+            <button <nodejs-embed>reverseOrder ? "disabled" : ""</nodejs-embed>>Show from the last transaction made</button>
+        </form>
         <hr>
         <nodejs-embed>
             let trans = transactions;

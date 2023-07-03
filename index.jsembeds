@@ -5,14 +5,35 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>PCCurrency</title>
-        <link rel="stylesheet" href="/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/style.css"></link>
     </head>
     <body>
-        <a href="/logout">Log out</a> <a href="/place">Place</a> <a href="/manageAccount">Manage</a> <a href="/api/">API</a>
+        <form action="/logout" class="linkbtn">
+            <button>Log out</button>
+        </form>
+        <form action="/place" class="linkbtn">
+            <button>Place</button>
+        </form>
+        <form action="/manageAccount" class="linkbtn">
+            <button>Manage</button>
+        </form>
+        <form action="/api" class="linkbtn">
+            <button>API</button>
+        </form>
+
         <h1>Welcome, <nodejs-embed>username</nodejs-embed></h1>
-        <b>Your balance is</b>: <nodejs-embed>currencyAmount</nodejs-embed> PC <a href="/hallOfTransactions">[hall of transactions]</a> <a href="/give">[create a transaction]</a> <br>
+        <b>Your balance is</b>: <nodejs-embed>currencyAmount</nodejs-embed> PC
+        <form action="/hallOfTransactions" class="linkbtn">
+            <button>Hall of Transactions</button>
+        </form>
+        <form action="/give" class="linkbtn">
+            <button>Create a transaction</button>
+        </form> <br>
         <b>On Place</b>, you have put <nodejs-embed>dailyPixAmount</nodejs-embed> pixels out of 1024. If you place more than that, you can still place pixels, but you won't earn any money. This limit resets <label class="datify"><nodejs-embed>isologon</nodejs-embed></label>. <br>
-        <b><a href="/difficulty">Mining difficulty</a></b> [<a href="/mining">download miner</a>] is set to <nodejs-embed>currentDifficulty</nodejs-embed>.
+        <form action="/difficulty" class="linkbtn">
+            <button><b>Mining difficulty</b></button>
+        </form> [<a href="/mining">download miner</a>] is set to <nodejs-embed>currentDifficulty</nodejs-embed>.
         <script src="/datify.js"></script>
     </body>
 </html>

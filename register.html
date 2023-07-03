@@ -5,7 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>PCCurrency - A newbie?</title>
-        <link rel="stylesheet" href="/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/style.css"></link>
     </head>
     <body>
         <h1>PCCurrency</h1>
@@ -16,9 +17,13 @@
         Username: <input id="userName" placeholder="Input your username..." required></input>
         <br>
         <button onclick="useImagination()" id="imaginationGenerator">Register with Imagination Security</button>
-
-        <div id="logon_message" hidden>
-            <b>Hang on</b>, the registration is still processing. You'll know when it's ready: it'll make you download 2 files called KEEP_SECRET.key and SEND_TO_SERVER.key. Make sure you keep them.
+        <div hidden class="logon_overlay" id="logon_overlay"></div>
+        <div hidden class="logon_message" id="logon_message">
+            The registration is being processed. Please wait.
+            <br>
+            Two files will be downloaded called SEND_TO_SERVER.key and KEEP_SECRET.key. These are needed to log in.
+            <br>
+            Please enable the automatic downloads permission.
         </div>
 
         <script src="/imagination/Imagination.js"></script>
@@ -26,11 +31,13 @@
         <script>
             function openOverlay() {
                 userName.disabled = true;
+                logon_overlay.hidden = false;
                 logon_message.hidden = false;
                 onbeforeunload = () => false;
             }
             function closeOverlayWithError(err) {
                 userName.disabled = false;
+                logon_overlay.hidden = true;
                 logon_message.hidden = true;
                 onbeforeunload = null;
                 if (err) alert("Registration failed:\n" + err.toString());

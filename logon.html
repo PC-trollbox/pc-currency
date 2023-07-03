@@ -5,7 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>PCCurrency - Welcome!</title>
-        <link rel="stylesheet" href="/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/style.css"></link>
     </head>
     <body>
         <h1>PCCurrency</h1>
@@ -23,9 +24,9 @@
             Insert a file named KEEP_SECRET.key: <input type="file" id="privkey"> <br>
             <button onclick="imaginationAuth()" id="keyed_auth">Log in</button>
         </div>
-
-        <div id="logon_message" hidden>
-            <b>Hang on</b>, the logon is still processing. You'll be redirected to the home page automatically.
+        <div hidden class="logon_overlay" id="logon_overlay"></div>
+        <div hidden class="logon_message" id="logon_message">
+            The logon is being processed. Please wait.
         </div>
 
         <script src="/imagination/Imagination.js"></script>
@@ -36,6 +37,7 @@
                 privkey.disabled = true;
                 try { keyless_auth.disabled = true; } catch {}
                 keyed_auth.disabled = true;
+                logon_overlay.hidden = false;
                 logon_message.hidden = false;
             }
             function closeOverlayWithError(err) {
@@ -43,6 +45,7 @@
                 privkey.disabled = false;
                 try { keyless_auth.disabled = false; } catch {}
                 keyed_auth.disabled = false;
+                logon_overlay.hidden = true;
                 logon_message.hidden = true;
                 if (err) alert("Logon failed:\n" + err.toString());
             }
