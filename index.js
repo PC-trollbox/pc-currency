@@ -75,14 +75,14 @@ function RequiredUserMiddleware(req, res, next) {
 		req.user = user.getUserBySecret(req.cookies.token);
 		if ((Date.now() - req.user.object.lastLogin) >= 86400000) {
 			let currentUser = structuredClone(req.user.object);
-			currentUser.transactions.push({
+			/*currentUser.transactions.push({
 				money: 100,
 				sender: "system",
 				recipient: req.user.username,
 				timestamp: Date.now(),
 				token: "DAILY-" + crypto.randomBytes(32).toString("hex"),
 				description: "Daily bonus for using PCCurrency."
-			});
+			});*/
 			currentUser.lastLogin = Date.now();
 			currentUser.placeUsages = 0;
 			user.setUser(req.user.username, currentUser);

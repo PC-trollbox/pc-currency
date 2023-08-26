@@ -12,6 +12,8 @@
     </head>
     <body>
         <a href="/">Return</a>
+        <br>
+        Want to integrate with PCCurrency? Contact the owner of this instance!
         <h1>Create Transaction</h1>
         <form action="/give" class="linkbtn">
             <button>Send PC inside of PCCurrency</button>
